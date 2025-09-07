@@ -27,13 +27,68 @@
     <style type="text/tailwindcss">
       :root {
         --font-inter: 'Inter', sans-serif;
+
+        --color-primary: #15803d;
       }
       @theme {
         --default-font-family: var(--font-inter), var(--font-sans);
+
+        --breakpoint-xs: 30rem;
+      }
+      @utility cus-container {
+        @apply max-w-[80rem] mx-auto px-4;
       }
     </style>
   </head>
   <body>
-    <h1 class="text-7xl text-red-500">Welcome</h1>
+    <!-- header -->
+    <header class="bg-primary">
+      <div class="cus-container">
+        <nav class="navbar text-white px-0">
+          <div class="navbar-start basis-full sm:basis-1/2">
+            <div class="dropdown">
+              <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 6h16M4 12h8m-8 6h16" />
+                </svg>
+              </div>
+              <ul
+                tabindex="0"
+                class="menu menu-sm dropdown-content rounded-box z-1 mt-3 w-52 p-2 shadow bg-primary">
+                <li><a href="#">About</a></li>
+                <li><a href="#">Gallery</a></li>
+                <li><a href="#">Plant a Tree</a></li>
+                <a
+                  class="btn btn-warning text-primary font-normal rounded-full xs:hidden"
+                  >Plant a Tree</a
+                >
+              </ul>
+            </div>
+            <a href="#" class="text-white text-xl font-semibold">Green Earth</a>
+          </div>
+          <div class="navbar-center hidden lg:flex">
+            <ul class="menu menu-horizontal px-1">
+              <li><a href="#">About</a></li>
+              <li><a href="#">Gallery</a></li>
+              <li><a href="#">Plant a Tree</a></li>
+            </ul>
+          </div>
+          <div class="navbar-end hidden xs:flex">
+            <a class="btn btn-warning text-primary font-normal rounded-full"
+              >Plant a Tree</a
+            >
+          </div>
+        </nav>
+      </div>
+    </header>
   </body>
 </html>
