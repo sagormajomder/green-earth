@@ -34,13 +34,34 @@
         --default-font-family: var(--font-inter), var(--font-sans);
 
         --breakpoint-xs: 30rem;
+
+        --color-body: #1f2937;
       }
+
+      @layer components {
+        .heading-primary,
+        .heading-secondary,
+        .heading-tertiary {
+          @apply text-body font-semibold mb-1.5;
+        }
+      }
+
       @utility cus-container {
         @apply max-w-[80rem] mx-auto px-4;
       }
+
+      @utility heading-primary {
+        @apply font-bold text-4xl;
+      }
+      @utility heading-secondary {
+        @apply text-2xl;
+      }
+      @utility heading-tertiary {
+        @apply text-xl;
+      }
     </style>
   </head>
-  <body>
+  <body class="min-h-screen">
     <!-- header -->
     <header class="bg-primary">
       <div class="cus-container">
@@ -90,5 +111,25 @@
         </nav>
       </div>
     </header>
+    <main>
+      <!-- Hero Section -->
+      <section class="bg-[#CFF0DC]">
+        <div
+          class="cus-container flex items-center justify-center bg-[url(./assets/hero-leaf1.png),url(./assets/hero-leaf2.png)] bg-position-[bottom_left,bottom_right] bg-no-repeat bg-size-[30%_auto] py-12">
+          <!-- Hero Content -->
+          <div class="text-center max-w-md">
+            <h1 class="heading-primary">Plant a Tree, Grow a Future</h1>
+            <p class="mb-5 opacity-80">
+              Join our mission to plant 1 million trees and make the Earth
+              greener for future generations.
+            </p>
+            <a class="btn btn-warning text-primary font-normal rounded-full"
+              >Get Involved</a
+            >
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer></footer>
   </body>
 </html>
