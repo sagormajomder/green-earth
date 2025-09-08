@@ -1,8 +1,16 @@
 'use strict';
+
+const data = {
+  totalCartPrice: 0,
+  plants: [],
+};
+
 const API_URL = 'https://openapi.programming-hero.com/api';
 const categoryBtnContainerEl = document.getElementById('categoryContainer');
 const cardsContainerEl = document.getElementById('cardsContainer');
 const allTreeBtnEl = document.getElementById('categoryBtn-0');
+const cartListContainerEl = document.getElementById('cartListContainer');
+const totalPriceContainerEl = document.getElementById('totalPriceContainer');
 
 // Helper Functions
 function errorMessage(el, msg) {
@@ -39,6 +47,64 @@ function removeNonActiveBtnStyle(els) {
   els.forEach(el => {
     el.classList.remove('font-medium', 'bg-primary', 'text-white');
   });
+}
+// /////////////////////////////////
+// ADD/DELETE ITEM TO CART
+// /////////////////////////////////
+function deleteCartPlant(id) {
+  data.plants = data.plants.filter(p => p.id !== id);
+  displayCart();
+  if (data.plants.length === 0) {
+    cartListContainerEl.classList.remove('border-b', 'border-gray-200');
+    totalPriceContainerEl.classList.add('hidden');
+    totalPriceContainerEl.classList.remove('flex');
+  }
+}
+function displayTotalPrice(totalPrice) {
+  const totalPriceEl = document.getElementById('totalPrice');
+
+  totalPriceContainerEl.classList.remove('hidden');
+  totalPriceContainerEl.classList.add('flex');
+
+  data.totalCartPrice = totalPrice;
+  totalPriceEl.innerText = data.totalCartPrice;
+}
+function displayCart() {
+  cartListContainerEl.innerHTML = '';
+  let totalPrice = 0;
+  let html = '';
+
+  data.plants.forEach(plant => {
+    html += `
+    <div
+      class="bg-[#F0FDF4] rounded-md flex justify-between items-center p-2">
+      <div class="space-y-1">
+        <h4 class="font-semibold text-sm">${plant.name}</h4>
+            <p class="">&#2547;${plant.price} &times; ${plant.count}</p>
+      </div>
+      <span onclick="deleteCartPlant(${plant.id})" class="text-3xl cursor-pointer">&times;</span>
+    </div>
+    
+    `;
+
+    totalPrice += plant.totalPrice;
+  });
+  cartListContainerEl.classList.add('border-b', 'border-gray-200');
+  cartListContainerEl.innerHTML = html;
+  displayTotalPrice(totalPrice);
+}
+function addToCart(plant) {
+  // check already added into Cart
+  const isExist = data.plants.find(p => p.id === plant.id);
+  if (isExist) {
+    isExist.count++;
+    isExist.totalPrice = isExist.count * isExist.price;
+  } else {
+    data.plants.push({ ...plant, count: 1, totalPrice: plant.price });
+  }
+  displayCart();
+
+  // console.log(data);
 }
 
 // /////////////////////////////////
@@ -79,7 +145,9 @@ function displayPlantCards(plants) {
                   <span class="font-semibold">&#2547;${price}</span>
                 </div>
               </div>
-              <button class="btn btn-block btn-primary rounded-full">
+              <button onclick='addToCart(${JSON.stringify(
+                plant
+              )})' class="btn btn-block btn-primary rounded-full">
                 Add to Cart
               </button>
             </div>
