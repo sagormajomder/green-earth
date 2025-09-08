@@ -35,26 +35,18 @@
         --color-body: #1f2937;
       }
 
-      @layer components {
-        .heading-primary,
-        .heading-secondary,
-        .heading-tertiary {
-          @apply text-body font-semibold mb-1.5;
-        }
-      }
-
       @utility cus-container {
         @apply max-w-[80rem] mx-auto px-4;
       }
 
       @utility heading-primary {
-        @apply font-bold text-4xl;
+        @apply font-bold text-4xl mb-1.5;
       }
       @utility heading-secondary {
-        @apply text-2xl;
+        @apply text-2xl mb-4 font-semibold;
       }
       @utility heading-tertiary {
-        @apply text-xl;
+        @apply text-xl mb-4 font-semibold;
       }
     </style>
   </head>
@@ -111,7 +103,7 @@
         </nav>
       </div>
     </header>
-    <main>
+    <main class="space-y-16 bg-[#F0FDF4]">
       <!-- Hero Section -->
       <section class="bg-[#CFF0DC]">
         <div
@@ -129,7 +121,35 @@
           </div>
         </div>
       </section>
+      <!-- Tree Shop -->
+      <section class="cus-container">
+        <h2 class="heading-secondary text-center">Choose Your Trees</h2>
+        <div class="grid grid-cols-10">
+          <!-- Categories -->
+          <div class="col-span-2">
+            <h3 class="heading-tertiary">Categories</h3>
+            <button
+              id="categoryBtn-0"
+              class="text-left rounded-sm p-2 font-medium hover:bg-primary bg-primary text-white hover:text-white hover:font-medium w-full mb-2 cateBtn">
+              All Trees
+            </button>
+
+            <!-- Spinner -->
+            <div id="spinner1" class="justify-center items-center hidden">
+              <span class="loading loading-spinner text-accent"></span>
+            </div>
+            <!-- Category Btn container -->
+            <div id="categoryContainer" class="flex flex-col gap-2"></div>
+          </div>
+          <div class="col-span-6"></div>
+          <div class="col-span-2">
+            <h3 class="heading-tertiary">Your Cart</h3>
+          </div>
+        </div>
+      </section>
     </main>
     <footer></footer>
+
+    <script src="./script.js"></script>
   </body>
 </html>
