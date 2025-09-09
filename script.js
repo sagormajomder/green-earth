@@ -210,8 +210,7 @@ async function loadAllPlants() {
   const { plants } = await res.json();
   manageSpinner('spinner2', false, cardsContainerEl);
 
-  // displayPlantCards(plants);
-  displayPlantCards([]);
+  displayPlantCards(plants);
 }
 
 // /////////////////////////////////
@@ -279,8 +278,7 @@ async function loadCategories() {
   const { categories } = await res.json();
 
   manageSpinner('spinner1', false, categoryBtnContainerEl);
-  // displayCategoriesBtn(categories);
-  displayCategoriesBtn([]);
+  displayCategoriesBtn(categories);
 }
 
 // /////////////////////////////////
