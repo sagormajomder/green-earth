@@ -101,7 +101,7 @@ function displayCart(el) {
         <h4 class="font-semibold text-base">${plant.name}</h4>
             <p class="opacity-80 text-base">&#2547;${plant.price} &times; ${plant.count}</p>
       </div>
-      <span onclick="deleteCartPlant(${plant.id})" class="text-3xl cursor-pointer">&times;</span>
+      <span onclick="deleteCartPlant(${plant.id})" class="text-3xl text-red-500 cursor-pointer">&times;</span>
     </div>
     
     `;
@@ -174,7 +174,7 @@ function displayPlantCards(plants) {
               <div class="space-y-2">
                 <h4 onclick='displayTreeModal(${JSON.stringify(
                   plant
-                )})' class="font-semibold text-base md:text-lg">${name}</h4>
+                )})' class="font-semibold text-base md:text-lg cursor-pointer">${name}</h4>
                 <p class="opacity-80">
                   ${description}
                 </p>
