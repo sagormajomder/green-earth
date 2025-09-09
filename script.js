@@ -10,7 +10,16 @@ const categoryBtnContainerEl = document.getElementById('categoryContainer');
 const cardsContainerEl = document.getElementById('cardsContainer');
 const allTreeBtnEl = document.getElementById('categoryBtn-0');
 const cartListContainerEl = document.getElementById('cartListContainer');
+const cartListContainerTwoEl = document.getElementById('cartListContainer-2');
 const totalPriceContainerEl = document.getElementById('totalPriceContainer');
+const totalPriceEl = document.getElementById('totalPrice');
+const totalPriceTwoEl = document.getElementById('totalPrice-2');
+
+const treeModalEl = document.getElementById('treeModal');
+const treeDetailsContainerEl = document.getElementById('treeDetailsContainer');
+const cartIconOneEl = document.getElementById('cartIcon-1');
+const cartIconTwoEl = document.getElementById('cartIcon-2');
+const cartModalEl = document.getElementById('cartModal');
 
 // Helper Functions
 function errorMessage(el, msg) {
@@ -51,26 +60,34 @@ function removeNonActiveBtnStyle(els) {
 // /////////////////////////////////
 // ADD/DELETE ITEM TO CART
 // /////////////////////////////////
+cartIconOneEl.addEventListener('click', function () {
+  cartModalEl.showModal();
+  displayCart(cartListContainerTwoEl);
+});
+cartIconTwoEl.addEventListener('click', function () {
+  cartModalEl.showModal();
+  displayCart(cartListContainerTwoEl);
+});
+
 function deleteCartPlant(id) {
   data.plants = data.plants.filter(p => p.id !== id);
-  displayCart();
+  displayCart(cartListContainerEl);
+  displayCart(cartListContainerTwoEl);
   if (data.plants.length === 0) {
     cartListContainerEl.classList.remove('border-b', 'border-gray-200');
     totalPriceContainerEl.classList.add('hidden');
     totalPriceContainerEl.classList.remove('flex');
   }
 }
-function displayTotalPrice(totalPrice) {
-  const totalPriceEl = document.getElementById('totalPrice');
-
+function displayTotalPrice(el, totalPrice) {
   totalPriceContainerEl.classList.remove('hidden');
   totalPriceContainerEl.classList.add('flex');
 
   data.totalCartPrice = totalPrice;
-  totalPriceEl.innerText = data.totalCartPrice;
+  el.innerText = data.totalCartPrice;
 }
-function displayCart() {
-  cartListContainerEl.innerHTML = '';
+function displayCart(el) {
+  el.innerHTML = '';
   let totalPrice = 0;
   let html = '';
 
@@ -79,8 +96,8 @@ function displayCart() {
     <div
       class="bg-[#F0FDF4] rounded-md flex justify-between items-center p-2">
       <div class="space-y-1">
-        <h4 class="font-semibold text-sm">${plant.name}</h4>
-            <p class="">&#2547;${plant.price} &times; ${plant.count}</p>
+        <h4 class="font-semibold text-base">${plant.name}</h4>
+            <p class="opacity-80 text-base">&#2547;${plant.price} &times; ${plant.count}</p>
       </div>
       <span onclick="deleteCartPlant(${plant.id})" class="text-3xl cursor-pointer">&times;</span>
     </div>
@@ -89,9 +106,10 @@ function displayCart() {
 
     totalPrice += plant.totalPrice;
   });
-  cartListContainerEl.classList.add('border-b', 'border-gray-200');
-  cartListContainerEl.innerHTML = html;
-  displayTotalPrice(totalPrice);
+  el.classList.add('border-b', 'border-gray-200');
+  el.innerHTML = html;
+  displayTotalPrice(totalPriceEl, totalPrice);
+  displayTotalPrice(totalPriceTwoEl, totalPrice);
 }
 function addToCart(plant) {
   // check already added into Cart
@@ -102,7 +120,7 @@ function addToCart(plant) {
   } else {
     data.plants.push({ ...plant, count: 1, totalPrice: plant.price });
   }
-  displayCart();
+  displayCart(cartListContainerEl);
 
   // console.log(data);
 }
@@ -118,6 +136,22 @@ function addToCart(plant) {
 // "category": "Fruit Tree",
 // "price": 500
 // },
+function displayTreeModal(plant) {
+  treeModalEl.showModal();
+  treeDetailsContainerEl.innerHTML = '';
+  const { image, name, description, category, price } = plant;
+  treeDetailsContainerEl.innerHTML = `
+  <div>
+    <h3 class="heading-tertiary">${name}</h3>
+    <img class="h-[13.125rem] object-cover w-full rounded-xl" src="${image}" alt="${name}" />
+  </div>
+  <p><span class="font-bold">Category: </span>${category}</p>
+  <p><span class="font-bold">Price: </span>&#2547;${price}</p>
+  <p>
+    <span class="font-bold">Description: </span>${description}
+  </p>
+  `;
+}
 function displayPlantCards(plants) {
   cardsContainerEl.innerHTML = '';
   let html = '';
@@ -131,17 +165,19 @@ function displayPlantCards(plants) {
     const { image, name, description, category, price } = plant;
 
     html += `
-    <div class="p-3 bg-white rounded-lg flex flex-col justify-around gap-4 ">
+    <div class="p-3 bg-white rounded-lg flex flex-col justify-between gap-4 shadow-md">
               <figure  class="rounded-lg">
-                <img class="rounded-lg h-[15.625rem] object-cover w-full" src="${image}" alt="Tree Image" />
+                <img class="rounded-lg h-[11.25rem] object-cover w-full" src="${image}" alt="Tree Image" />
               </figure>
               <div class="space-y-2">
-                <h4 class="font-semibold text-lg">${name}</h4>
+                <h4 onclick='displayTreeModal(${JSON.stringify(
+                  plant
+                )})' class="font-semibold text-base md:text-lg">${name}</h4>
                 <p class="opacity-80">
                   ${description}
                 </p>
                 <div class="flex justify-between items-center">
-                  <span class="bg-[#DCFCE7] text-primary rounded-full text-sm px-3 py-1 font-medium">${category}</span>
+                  <span class="bg-[#DCFCE7] text-primary rounded-full text-xs md:text-sm px-3 py-1 font-medium">${category}</span>
                   <span class="font-semibold">&#2547;${price}</span>
                 </div>
               </div>
@@ -214,7 +250,7 @@ function displayCategoriesBtn(categories) {
     html += `
     <button id="categoryBtn-${id}"
       onclick = "loadCategoryPlant(${id})"
-      class="text-left text-lg rounded-sm p-2 hover:bg-primary hover:text-white hover:font-medium cateBtn cursor-pointer">
+      class="text-left text-base lg:text-lg rounded-sm p-2 hover:bg-primary hover:text-white hover:font-medium cateBtn cursor-pointer">
       ${category_name}
     </button>
     `;
