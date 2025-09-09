@@ -6,9 +6,9 @@ const data = {
 };
 
 const API_URL = 'https://openapi.programming-hero.com/api';
+
 const categoryBtnContainerEl = document.getElementById('categoryContainer');
 const cardsContainerEl = document.getElementById('cardsContainer');
-// const allTreeBtnEl = document.getElementById('categoryBtn-0');
 const cartListContainerEl = document.getElementById('cartListContainer');
 const cartListContainerTwoEl = document.getElementById('cartListContainer-2');
 const totalPriceContainerEl = document.getElementById('totalPriceContainer');
@@ -169,7 +169,7 @@ function displayPlantCards(plants) {
     html += `
     <div class="p-3 bg-white rounded-lg flex flex-col justify-between gap-4 shadow-md">
               <figure  class="rounded-lg">
-                <img class="rounded-lg h-[11.25rem] object-cover w-full" src="${image}" alt="Tree Image" />
+                <img class="rounded-lg h-[11.25rem] object-cover w-full" src="${image}" alt="${name}" />
               </figure>
               <div class="space-y-2">
                 <h4 onclick='displayTreeModal(${JSON.stringify(
@@ -210,7 +210,8 @@ async function loadAllPlants() {
   const { plants } = await res.json();
   manageSpinner('spinner2', false, cardsContainerEl);
 
-  displayPlantCards(plants);
+  // displayPlantCards(plants);
+  displayPlantCards([]);
 }
 
 // /////////////////////////////////
@@ -241,7 +242,7 @@ function displayCategoriesBtn(categories) {
   let html = `<button
               id="categoryBtn-0"
               onclick = "loadAllPlants()"
-              class="text-left rounded-sm p-2 hover:bg-primary hover:text-white hover:font-medium mb-2 cursor-pointer cateBtn text-base lg:text-lg xs:inline-block">
+              class="text-left rounded-sm p-2 hover:bg-primary hover:text-white hover:font-medium cursor-pointer cateBtn text-base lg:text-lg xs:inline-block">
               All Trees
             </button>`;
 
@@ -278,7 +279,8 @@ async function loadCategories() {
   const { categories } = await res.json();
 
   manageSpinner('spinner1', false, categoryBtnContainerEl);
-  displayCategoriesBtn(categories);
+  // displayCategoriesBtn(categories);
+  displayCategoriesBtn([]);
 }
 
 // /////////////////////////////////

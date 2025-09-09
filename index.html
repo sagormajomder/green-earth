@@ -43,7 +43,7 @@
         @apply font-bold text-[1.75rem] md:text-4xl mb-1.5;
       }
       @utility heading-secondary {
-        @apply text-xl md:text-2xl mb-4 font-semibold;
+        @apply text-xl md:text-2xl mb-4 font-semibold text-center;
       }
       @utility heading-tertiary {
         @apply text-lg md:text-xl mb-4 font-semibold;
@@ -230,6 +230,32 @@
               <p>&#2547;<span id="totalPrice">0</span></p>
             </div>
           </div>
+        </div>
+      </section>
+      <!-- Campaing Section -->
+      <section
+        class="cus-container grid xs:grid-cols-12 grid-cols-1 gap-6 sm:items-center items-start justify-items-center">
+        <h2 class="heading-secondary col-span-full">About the Campaign</h2>
+        <figure
+          class="col-span-full col-start-1 xs:col-span-6 md:col-start-3 md:col-span-4 row-start-2 xs:row-start-2">
+          <img
+            class="text-center inline-block"
+            src="./assets/about.png"
+            alt="campaing image" />
+        </figure>
+        <div
+          class="col-span-full xs:col-span-6 sm:col-start-7 md:col-span-4 space-y-5 row-start-3 xs:row-start-2">
+          <p>
+            Green Earth is a global tree plantation initiative dedicated to
+            fighting climate change. Since our start, we’ve planted over 500,000
+            trees worldwide. By joining our campaign, you help restore forests,
+            create habitats for wildlife, and combat global warming.
+          </p>
+          <ul class="list-disc ml-6">
+            <li>Restoration of natural habitats</li>
+            <li>Improvement of air quality</li>
+            <li>Support for local communities</li>
+          </ul>
         </div>
       </section>
     </main>
