@@ -69,6 +69,13 @@ cartIconTwoEl.addEventListener('click', function () {
   displayCart(cartListContainerTwoEl);
 });
 
+function displayTotalCartItemNum(cartItemNum) {
+  const cartNumberOneEl = document.getElementById('itemNum-1');
+  const cartNumberTwoEl = document.getElementById('itemNum-2');
+  cartNumberOneEl.innerText = cartItemNum;
+  cartNumberTwoEl.innerText = cartItemNum;
+}
+
 function deleteCartPlant(id) {
   data.plants = data.plants.filter(p => p.id !== id);
   displayCart(cartListContainerEl);
@@ -92,6 +99,7 @@ function displayCart(el) {
   el.innerHTML = '';
   let totalPrice = 0;
   let html = '';
+  let cartItemNum = 0;
 
   data.plants.forEach(plant => {
     html += `
@@ -107,11 +115,15 @@ function displayCart(el) {
     `;
 
     totalPrice += plant.totalPrice;
+    cartItemNum += plant.count;
   });
   el.classList.add('border-b', 'border-gray-200');
   el.innerHTML = html;
+
   displayTotalPrice(totalPriceEl, totalPrice);
   displayTotalPrice(totalPriceTwoEl, totalPrice);
+
+  displayTotalCartItemNum(cartItemNum);
 }
 function addToCart(plant) {
   // check already added into Cart
@@ -123,21 +135,11 @@ function addToCart(plant) {
     data.plants.push({ ...plant, count: 1, totalPrice: plant.price });
   }
   displayCart(cartListContainerEl);
-
-  // console.log(data);
 }
 
 // /////////////////////////////////
 // PLANTS LOAD AND DISPLAY
 // /////////////////////////////////
-// {
-// "id": 1,
-// "image": "https://i.ibb.co.com/cSQdg7tf/mango-min.jpg",
-// "name": "Mango Tree",
-// "description": "A fast-growing tropical tree that produces delicious, juicy mangoes during summer. Its dense green canopy offers shade, while its sweet fruits are rich in vitamins and minerals.",
-// "category": "Fruit Tree",
-// "price": 500
-// },
 function displayTreeModal(plant) {
   treeModalEl.showModal();
   treeDetailsContainerEl.innerHTML = '';
@@ -227,15 +229,6 @@ function determinedActiveBtn() {
   });
 }
 
-// allTreeBtnEl.addEventListener('click', () => {
-//   loadAllPlants();
-// });
-
-// {
-// "id": 1,
-// "category_name": "Fruit Tree",
-// "small_description": "Trees that bear edible fruits like mango, guava, and jackfruit."
-// },
 function displayCategoriesBtn(categories) {
   categoryBtnContainerEl.innerHTML = '';
   let html = `<button
