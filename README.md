@@ -118,11 +118,15 @@ console.log(pass); // "All pass"
 
 It help us to defined string with some advantages and enhanced string concatenation. To define string, we need to use ` backtick(``) `
 
-- With template literals, we can easily add js expresssion into strings.
+- With template literals, we can easily add js expresssion and strings together means easy string concatenation. In tradidional string concatenation, we have to use multiple `+` and `""` to concate string.
 
 ```js
+// Tradidional  concatenation
 const name = 'Sagor Majomder';
 const age = 25;
+const finalString = 'I am ' + name + '. My age is ' + age;
+console.log(finalString); // "I am Sagor Majomder. My age is 25"
+// Template Literals
 console.log(` I am ${name}. My age is ${age}`); // "I am Sagor Majomder. My age is 25"
 ```
 
