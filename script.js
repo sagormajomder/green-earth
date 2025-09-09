@@ -8,7 +8,7 @@ const data = {
 const API_URL = 'https://openapi.programming-hero.com/api';
 const categoryBtnContainerEl = document.getElementById('categoryContainer');
 const cardsContainerEl = document.getElementById('cardsContainer');
-const allTreeBtnEl = document.getElementById('categoryBtn-0');
+// const allTreeBtnEl = document.getElementById('categoryBtn-0');
 const cartListContainerEl = document.getElementById('cartListContainer');
 const cartListContainerTwoEl = document.getElementById('cartListContainer-2');
 const totalPriceContainerEl = document.getElementById('totalPriceContainer');
@@ -23,14 +23,14 @@ const cartModalEl = document.getElementById('cartModal');
 
 // Helper Functions
 function errorMessage(el, msg) {
-  el.innerHTML = msg;
+  el.innerHTML = `<p class="bg-red-200 p-2 rounded-md text-red-500">${msg}</p>`;
 }
 function manageSpinner(id, status, el) {
   const spinnerEl = document.getElementById(id);
   if (status) {
     spinnerEl.classList.remove('hidden');
     spinnerEl.classList.add('flex');
-    if (el.classList.contains('flex')) {
+    if (el.classList.contains('flex-row')) {
       el.classList.remove('flex');
     } else {
       el.classList.remove('grid');
@@ -41,7 +41,7 @@ function manageSpinner(id, status, el) {
     spinnerEl.classList.remove('flex');
     spinnerEl.classList.add('hidden');
     el.classList.remove('hidden');
-    if (el.classList.contains('flex')) {
+    if (el.classList.contains('flex-row')) {
       el.classList.add('flex');
     } else {
       el.classList.add('grid');
@@ -80,8 +80,10 @@ function deleteCartPlant(id) {
   }
 }
 function displayTotalPrice(el, totalPrice) {
-  totalPriceContainerEl.classList.remove('hidden');
-  totalPriceContainerEl.classList.add('flex');
+  if (totalPrice) {
+    totalPriceContainerEl.classList.remove('hidden');
+    totalPriceContainerEl.classList.add('flex');
+  }
 
   data.totalCartPrice = totalPrice;
   el.innerText = data.totalCartPrice;
@@ -207,6 +209,7 @@ async function loadAllPlants() {
   const res = await fetch(`${API_URL}/plants`);
   const { plants } = await res.json();
   manageSpinner('spinner2', false, cardsContainerEl);
+
   displayPlantCards(plants);
 }
 
@@ -224,9 +227,9 @@ function determinedActiveBtn() {
   });
 }
 
-allTreeBtnEl.addEventListener('click', () => {
-  loadAllPlants();
-});
+// allTreeBtnEl.addEventListener('click', () => {
+//   loadAllPlants();
+// });
 
 // {
 // "id": 1,
@@ -235,7 +238,12 @@ allTreeBtnEl.addEventListener('click', () => {
 // },
 function displayCategoriesBtn(categories) {
   categoryBtnContainerEl.innerHTML = '';
-  let html = ``;
+  let html = `<button
+              id="categoryBtn-0"
+              onclick = "loadAllPlants()"
+              class="text-left rounded-sm p-2 hover:bg-primary hover:text-white hover:font-medium mb-2 cursor-pointer cateBtn text-base lg:text-lg xs:inline-block">
+              All Trees
+            </button>`;
 
   if (categories.length === 0) {
     errorMessage(
@@ -258,6 +266,9 @@ function displayCategoriesBtn(categories) {
 
   categoryBtnContainerEl.innerHTML = html;
 
+  const allTreeBtnEl = document.getElementById('categoryBtn-0');
+  addActiveBtnStyle(allTreeBtnEl);
+
   determinedActiveBtn();
 }
 
@@ -275,7 +286,6 @@ async function loadCategories() {
 // /////////////////////////////////
 function init() {
   loadCategories();
-  addActiveBtnStyle(allTreeBtnEl);
   loadAllPlants();
 }
 
