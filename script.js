@@ -218,25 +218,24 @@ async function loadAllPlants() {
 // /////////////////////////////////
 // CATEGORIES LOAD AND DISPLAY
 // /////////////////////////////////
-function determinedActiveBtn() {
-  const categoryBtns = document.querySelectorAll('.cateBtn');
+function handleCatBtn(e) {
+  e.stopPropagation();
 
-  categoryBtns.forEach(btn => {
-    btn.addEventListener('click', function (e) {
-      removeNonActiveBtnStyle(categoryBtns);
-      addActiveBtnStyle(e.target);
-    });
-  });
+  if (e.target.localName === 'button') {
+    const categoryBtns = document.querySelectorAll('.cateBtn');
+    removeNonActiveBtnStyle(categoryBtns);
+    addActiveBtnStyle(e.target);
+    if (e.target.id === 'categoryBtn-0') {
+      loadAllPlants();
+    } else {
+      const plantId = e.target.id.split('-')[1];
+      loadCategoryPlant(plantId);
+    }
+  }
 }
 
 function displayCategoriesBtn(categories) {
   categoryBtnContainerEl.innerHTML = '';
-  let html = `<button
-              id="categoryBtn-0"
-              onclick = "loadAllPlants()"
-              class="text-left rounded-sm p-2 hover:bg-primary hover:text-white hover:font-medium cursor-pointer cateBtn text-base lg:text-lg xs:inline-block">
-              All Trees
-            </button>`;
 
   if (categories.length === 0) {
     errorMessage(
@@ -246,11 +245,16 @@ function displayCategoriesBtn(categories) {
     return;
   }
 
+  let html = `<button
+              id="categoryBtn-0"
+              class="text-left rounded-sm p-2 hover:bg-primary hover:text-white hover:font-medium cursor-pointer cateBtn text-base lg:text-lg xs:inline-block text-white font-medium bg-primary">
+              All Trees
+            </button>`;
+
   categories.forEach(category => {
     const { id, category_name } = category;
     html += `
     <button id="categoryBtn-${id}"
-      onclick = "loadCategoryPlant(${id})"
       class="text-left text-base lg:text-lg rounded-sm p-2 hover:bg-primary hover:text-white hover:font-medium cateBtn cursor-pointer">
       ${category_name}
     </button>
@@ -259,10 +263,7 @@ function displayCategoriesBtn(categories) {
 
   categoryBtnContainerEl.innerHTML = html;
 
-  const allTreeBtnEl = document.getElementById('categoryBtn-0');
-  addActiveBtnStyle(allTreeBtnEl);
-
-  determinedActiveBtn();
+  categoryBtnContainerEl.addEventListener('click', handleCatBtn);
 }
 
 async function loadCategories() {
