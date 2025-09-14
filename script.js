@@ -2,7 +2,7 @@
 
 const data = {
   totalCartPrice: 0,
-  plants: [],
+  cartPlants: [],
 };
 
 const API_URL = 'https://openapi.programming-hero.com/api';
@@ -77,10 +77,10 @@ function displayTotalCartItemNum(cartItemNum) {
 }
 
 function deleteCartPlant(id) {
-  data.plants = data.plants.filter(p => p.id !== id);
+  data.cartPlants = data.cartPlants.filter(p => p.id !== id);
   displayCart(cartListContainerEl);
   displayCart(cartListContainerTwoEl);
-  if (data.plants.length === 0) {
+  if (data.cartPlants.length === 0) {
     cartListContainerEl.classList.remove('border-b', 'border-gray-200');
     totalPriceContainerEl.classList.add('hidden');
     totalPriceContainerEl.classList.remove('flex');
@@ -95,23 +95,35 @@ function displayTotalPrice(el, totalPrice) {
   data.totalCartPrice = totalPrice;
   el.innerText = data.totalCartPrice;
 }
+
+function handleCartEvents(e) {
+  e.stopPropagation();
+
+  if (e.target.matches('.delete-cart-item')) {
+    const cartItem = e.target.closest('[data-plant-id]');
+    if (cartItem) {
+      const plantId = +cartItem.dataset.plantId;
+      deleteCartPlant(plantId);
+    }
+  }
+}
+
 function displayCart(el) {
   el.innerHTML = '';
   let totalPrice = 0;
   let html = '';
   let cartItemNum = 0;
 
-  data.plants.forEach(plant => {
+  data.cartPlants.forEach(plant => {
     html += `
-    <div
+    <div data-plant-id="${plant.id}"
       class="bg-[#F0FDF4] rounded-md flex justify-between items-center p-2">
       <div class="space-y-1">
         <h4 class="font-semibold text-base">${plant.name}</h4>
             <p class="opacity-80 text-base">&#2547;${plant.price} &times; ${plant.count}</p>
       </div>
-      <span onclick="deleteCartPlant(${plant.id})" class="text-3xl text-red-500 cursor-pointer">&times;</span>
+      <span class="delete-cart-item text-3xl text-red-500 cursor-pointer">&times;</span>
     </div>
-    
     `;
 
     totalPrice += plant.totalPrice;
@@ -120,6 +132,8 @@ function displayCart(el) {
   el.classList.add('border-b', 'border-gray-200');
   el.innerHTML = html;
 
+  el.addEventListener('click', handleCartEvents);
+
   displayTotalPrice(totalPriceEl, totalPrice);
   displayTotalPrice(totalPriceTwoEl, totalPrice);
 
@@ -127,12 +141,12 @@ function displayCart(el) {
 }
 function addToCart(plant) {
   // check already added into Cart
-  const isExist = data.plants.find(p => p.id === plant.id);
+  const isExist = data.cartPlants.find(p => p.id === plant.id);
   if (isExist) {
     isExist.count++;
     isExist.totalPrice = isExist.count * isExist.price;
   } else {
-    data.plants.push({ ...plant, count: 1, totalPrice: plant.price });
+    data.cartPlants.push({ ...plant, count: 1, totalPrice: plant.price });
   }
   displayCart(cartListContainerEl);
 }
@@ -156,27 +170,45 @@ function displayTreeModal(plant) {
   </p>
   `;
 }
-function displayPlantCards(plants) {
-  cardsContainerEl.innerHTML = '';
-  let html = '';
 
+function handlePlantEvents(e, plants) {
+  e.stopPropagation();
+
+  const plantCard = e.target.closest('[data-plant-id]');
+  if (!plantCard) return;
+
+  const plantId = +plantCard.dataset.plantId;
+  const plant = plants.find(p => p.id === plantId);
+
+  if (!plant) return;
+
+  if (e.target.matches('.addToCartBtn')) {
+    addToCart(plant);
+  }
+  if (e.target.matches('.plantHeading')) {
+    displayTreeModal(plant);
+  }
+}
+
+function displayPlantCards(plants) {
   if (plants.length === 0) {
     errorMessage(cardsContainerEl, 'Unknown error happen. plants not Found.');
     return;
   }
 
+  cardsContainerEl.innerHTML = '';
+  let html = '';
+
   plants.forEach(plant => {
-    const { image, name, description, category, price } = plant;
+    const { id, image, name, description, category, price } = plant;
 
     html += `
-    <div class="p-3 bg-white rounded-lg flex flex-col justify-between gap-4 shadow-md">
+    <div data-plant-id="${id}" class="p-3 bg-white rounded-lg flex flex-col justify-between gap-4 shadow-md">
               <figure  class="rounded-lg">
                 <img class="rounded-lg h-[11.25rem] object-cover w-full" src="${image}" alt="${name}" />
               </figure>
               <div class="space-y-2">
-                <h4 onclick='displayTreeModal(${JSON.stringify(
-                  plant
-                )})' class="font-semibold text-base md:text-lg cursor-pointer">${name}</h4>
+                <h4  class="font-semibold text-base md:text-lg cursor-pointer plantHeading">${name}</h4>
                 <p class="opacity-80">
                   ${description}
                 </p>
@@ -185,9 +217,7 @@ function displayPlantCards(plants) {
                   <span class="font-semibold">&#2547;${price}</span>
                 </div>
               </div>
-              <button onclick='addToCart(${JSON.stringify(
-                plant
-              )})' class="btn btn-block btn-primary rounded-full">
+              <button  class="btn btn-block btn-primary rounded-full addToCartBtn">
                 Add to Cart
               </button>
             </div>
@@ -196,23 +226,48 @@ function displayPlantCards(plants) {
   });
 
   cardsContainerEl.innerHTML = html;
+
+  cardsContainerEl.addEventListener('click', e => {
+    handlePlantEvents(e, plants);
+  });
 }
 
 async function loadCategoryPlant(categoryID) {
-  manageSpinner('spinner2', true, cardsContainerEl);
-  const res = await fetch(`${API_URL}/category/${categoryID}`);
-  const { plants } = await res.json();
-  manageSpinner('spinner2', false, cardsContainerEl);
-  displayPlantCards(plants);
+  try {
+    manageSpinner('spinner2', true, cardsContainerEl);
+
+    const res = await fetch(`${API_URL}/category/${categoryID}`);
+
+    if (!res.ok) throw new Error('Failed to fetch category plants');
+
+    const { plants } = await res.json();
+
+    displayPlantCards(plants);
+  } catch (error) {
+    errorMessage(
+      cardsContainerEl,
+      `Failed to load category plants. Please Try again!`
+    );
+  } finally {
+    manageSpinner('spinner2', false, cardsContainerEl);
+  }
 }
 
 async function loadAllPlants() {
-  manageSpinner('spinner2', true, cardsContainerEl);
-  const res = await fetch(`${API_URL}/plants`);
-  const { plants } = await res.json();
-  manageSpinner('spinner2', false, cardsContainerEl);
+  try {
+    manageSpinner('spinner2', true, cardsContainerEl);
 
-  displayPlantCards(plants);
+    const res = await fetch(`${API_URL}/plants`);
+
+    if (!res.ok) throw new Error('Failed to fetch plants');
+
+    const { plants } = await res.json();
+    displayPlantCards(plants);
+  } catch (error) {
+    errorMessage(cardsContainerEl, `Failed to load plants. Please Try again!`);
+  } finally {
+    manageSpinner('spinner2', false, cardsContainerEl);
+  }
 }
 
 // /////////////////////////////////
@@ -267,12 +322,23 @@ function displayCategoriesBtn(categories) {
 }
 
 async function loadCategories() {
-  manageSpinner('spinner1', true, categoryBtnContainerEl);
-  const res = await fetch(`${API_URL}/categories`);
-  const { categories } = await res.json();
+  try {
+    manageSpinner('spinner1', true, categoryBtnContainerEl);
 
-  manageSpinner('spinner1', false, categoryBtnContainerEl);
-  displayCategoriesBtn(categories);
+    const res = await fetch(`${API_URL}/categories`);
+
+    if (!res.ok) throw new Error('Failed to fetch categories');
+
+    const { categories } = await res.json();
+    displayCategoriesBtn(categories);
+  } catch (error) {
+    errorMessage(
+      categoryBtnContainerEl,
+      `Failed to load categories. Please Try again!`
+    );
+  } finally {
+    manageSpinner('spinner1', false, categoryBtnContainerEl);
+  }
 }
 
 // /////////////////////////////////
